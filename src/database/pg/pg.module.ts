@@ -14,7 +14,7 @@ import { TrxRepository } from './repository/trx/repository';
     {
       provide: PG_POOL,
       inject: [ConfigService],
-      useFactory: (config: ConfigService<AppConfig>): Pool => {
+      useFactory: async (config: ConfigService<AppConfig>): Promise<Pool> => {
         const poolConfig: PoolConfig = {
           host: config.getOrThrow('database.pg.host', { infer: true }),
           port: config.getOrThrow('database.pg.port', { infer: true }),
@@ -22,7 +22,12 @@ import { TrxRepository } from './repository/trx/repository';
           password: config.getOrThrow('database.pg.password', { infer: true }),
           database: config.getOrThrow('database.pg.database', { infer: true }),
         };
-        return new Pool(poolConfig);
+
+        const pool = new Pool(poolConfig);
+
+        console.log((await pool.query('SELECT 1')).rows);
+
+        return pool;
       },
     },
     PartnerTrxRepository,
