@@ -1,15 +1,11 @@
-import {
-  Body,
-  Controller,
-  HttpException,
-  HttpStatus,
-  Post,
-} from '@nestjs/common';
-import { PartnerTrxRepository } from 'src/database/pg/repository/partner-trx/repository';
+import { Body, Controller, Get, Post } from '@nestjs/common';
+import { PartnerCallbackService } from './partner-callback.service';
 
 @Controller('partner-callback')
 export class PartnerCallbackController {
-  constructor(private readonly partnerTrxRepo: PartnerTrxRepository) {}
+  constructor(
+    private readonly partnerCallbackService: PartnerCallbackService,
+  ) {}
 
   @Post('test')
   test() {
@@ -18,19 +14,16 @@ export class PartnerCallbackController {
 
   @Post()
   async handle(@Body() body: any) {
-    if (body?.transactionStatusDesc !== 'Success') {
-      throw new HttpException('Transaction failed', HttpStatus.BAD_REQUEST);
-    }
-
-    // Only update partner_transaction when payload contains partner_trx.id
-    const partnerTrxId: unknown = body?.originalPartnerReferenceNo;
-    if (typeof partnerTrxId === 'string' && partnerTrxId.length > 0) {
-      await this.partnerTrxRepo.markPaid(partnerTrxId);
-    }
-
+    await this.partnerCallbackService.handle(body);
     return {
       status: 'success',
       message: 'Callback received',
     };
+  }
+
+  @Get('counter')
+  async getCounter() {
+    const counter = await this.partnerCallbackService.getCounter();
+    return { counter };
   }
 }

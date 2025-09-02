@@ -7,7 +7,6 @@ import { ConfigModule } from '@nestjs/config';
 import configuration from './config/configuration';
 import { PartnerTrxModule } from './modules/partner-trx/partner-trx.module';
 import { TriggerCallbackModule } from './modules/trigger-callback/trigger-callback.module';
-import { RabbitmqModule } from './messaging/rabbitmq.module';
 import { CallbackModule } from './modules/callback/callback.module';
 import { PartnerCallbackModule } from './modules/partner-callback/partner-callback.module';
 
@@ -20,7 +19,6 @@ import { PartnerCallbackModule } from './modules/partner-callback/partner-callba
     TransactionModule,
     PartnerTrxModule,
     PgModule,
-    RabbitmqModule,
     CallbackModule,
     TriggerCallbackModule,
     PartnerCallbackModule,

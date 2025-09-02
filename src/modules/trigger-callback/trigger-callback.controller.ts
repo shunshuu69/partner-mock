@@ -12,6 +12,7 @@ export class TriggerCallbackController {
     return this.triggerCallbackService.triggerAll({ ...body });
   }
 
+  @Post('one')
   triggerOne() {
     return this.triggerCallbackService.triggerOne();
   }
