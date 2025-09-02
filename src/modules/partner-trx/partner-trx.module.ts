@@ -1,11 +1,9 @@
 import { Module } from '@nestjs/common';
 import { PartnerTrxController } from './partner-trx.controller';
-import { PartnerTrxService } from './partner-trx.service';
-import { PgModule } from 'src/database/pg/pg.module';
 
 @Module({
-  imports: [PgModule],
+  imports: [],
   controllers: [PartnerTrxController],
-  providers: [PartnerTrxService],
+  providers: [],
 })
 export class PartnerTrxModule {}
