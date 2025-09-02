@@ -7,7 +7,7 @@ import Redis from 'ioredis';
     {
       provide: 'REDIS',
       useFactory: (): Redis => {
-        const keyPrefix = 'counter';
+        const keyPrefix = 'counter:';
 
         const host = process.env.REDIS_HOST || '127.0.0.1';
         const port = parseInt(process.env.REDIS_PORT || '6379', 10);

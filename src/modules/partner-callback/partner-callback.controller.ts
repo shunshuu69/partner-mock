@@ -26,4 +26,10 @@ export class PartnerCallbackController {
     const counter = await this.partnerCallbackService.getCounter();
     return { counter };
   }
+
+  @Post('counter/reset')
+  async resetCounter() {
+    const counter = await this.partnerCallbackService.resetCounter();
+    return { counter };
+  }
 }
