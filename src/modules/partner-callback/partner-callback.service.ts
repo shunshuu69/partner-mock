@@ -7,8 +7,11 @@ export class PartnerCallbackService {
   constructor(@Inject('REDIS') private readonly redis: Redis) {}
 
   async handle(body: any) {
+    // add random delay from 0 to 6 seconds
+    // const delay = Math.floor(Math.random() * 6000);
+    // await new Promise((resolve) => setTimeout(resolve, delay));
     // add counter to redis
-    const counter = await this.redis.incr('partner-received');
+    await this.redis.incr('partner-received');
 
     return;
   }
