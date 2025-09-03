@@ -7,8 +7,8 @@ import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended'
 export default tseslint.config(
   {
     ignores: [
-      'dist',            // build output
-      'node_modules',    // dependencies
+      'dist', // build output
+      'node_modules', // dependencies
     ],
   },
   // Base ESLint recommended
@@ -24,7 +24,7 @@ export default tseslint.config(
         ...globals.jest,
       },
       parserOptions: {
-        project: './tsconfig.json',      // 👈 important for type-aware linting
+        project: './tsconfig.json', // 👈 important for type-aware linting
         tsconfigRootDir: import.meta.dirname,
         sourceType: 'module',
       },
@@ -33,7 +33,7 @@ export default tseslint.config(
   {
     rules: {
       // Customize rules
-      '@typescript-eslint/no-explicit-any': 'off',      // allow `any`
+      '@typescript-eslint/no-explicit-any': 'off', // allow `any`
       '@typescript-eslint/no-floating-promises': 'warn',
       '@typescript-eslint/no-unsafe-argument': 'warn',
       '@typescript-eslint/no-unsafe-call': 'off',

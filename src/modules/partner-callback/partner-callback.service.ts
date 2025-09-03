@@ -6,24 +6,55 @@ import Redis from 'ioredis';
 export class PartnerCallbackService {
   constructor(@Inject('REDIS') private readonly redis: Redis) {}
 
-  async handle(body: any) {
-    // add random delay from 0 to 6 seconds
-    // const delay = Math.floor(Math.random() * 6000);
-    // await new Promise((resolve) => setTimeout(resolve, delay));
-    // add counter to redis
-    await this.redis.incr('partner-received');
+  async handle(body: unknown) {
+    // reference body to avoid unused param lint
+    void body;
+    // Determine partner code from environment variable
+    const envCode = (process.env.PARTNER ?? '').toUpperCase();
+    const valid = ['A', 'B', 'C', 'D'] as const;
+    type PartnerLetter = (typeof valid)[number];
+    const isPartnerLetter = (x: string): x is PartnerLetter =>
+      (valid as readonly string[]).includes(x);
 
+    const partnerCode: PartnerLetter | 'unknown' = isPartnerLetter(envCode)
+      ? envCode
+      : 'unknown';
+
+    // Increment per-partner counter
+    await this.redis.incr(`partner-received:${partnerCode}`);
     return;
   }
 
-  async getCounter(): Promise<number> {
-    const value = await this.redis.get('partner-received');
-    return Number(value ?? 0);
+  async getCounter(): Promise<Record<string, number>> {
+    const codes = ['A', 'B', 'C', 'D', 'unknown'] as const;
+    const keys = codes.map((c) => `partner-received:${c}`);
+    const values = await this.redis.mget(...keys);
+    const result: Record<string, number> = {};
+    let total = 0;
+    values.forEach((v, i) => {
+      const n = Number(v ?? 0);
+      result[codes[i]] = n;
+      total += n;
+    });
+    result.total = total;
+    return result;
   }
 
-  async resetCounter(): Promise<number> {
-    await this.redis.set('partner-received', 0);
-    const value = await this.redis.get('partner-received');
-    return Number(value ?? 0);
+  async resetCounter(): Promise<Record<string, number>> {
+    const codes = ['A', 'B', 'C', 'D', 'unknown'] as const;
+    for (const c of codes) {
+      await this.redis.set(`partner-received:${c}`, 0);
+    }
+    const keys = codes.map((c) => `partner-received:${c}`);
+    const values = await this.redis.mget(...keys);
+    const result: Record<string, number> = {};
+    let total = 0;
+    values.forEach((v, i) => {
+      const n = Number(v ?? 0);
+      result[codes[i]] = n;
+      total += n;
+    });
+    result.total = total;
+    return result;
   }
 }
